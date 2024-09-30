@@ -2,12 +2,14 @@ FROM golang:1.22.-alpine
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY . .
 
-RUN go mod download
+RUN go mod tidy
 
-COPY *.go *.db ./
+RUN CGO_ENABLED=0 GOOS= linux GOARCH=amd64 go build -o /main main.go parcel.go
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /my_app
+RUN go build ./main.go ./parcel.go;
 
-CMD ["/my_app"]
+#CMD ./main
+
+CMD ["/main"]
